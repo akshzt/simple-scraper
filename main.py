@@ -6,10 +6,15 @@ from storage import JSONStorage
 from notifier import ConsoleNotifier
 from cache import Cache
 import uvicorn
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
+STATIC_TOKEN = os.getenv("STATIC_TOKEN")
+print(f"STATIC_TOKEN: {STATIC_TOKEN}")
 
 app = FastAPI()
-
-STATIC_TOKEN = "token"
 
 def authenticate(token: str = Header(...)):
     if token != STATIC_TOKEN:

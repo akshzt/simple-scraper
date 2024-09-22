@@ -6,14 +6,18 @@ from cache import Cache
 import os
 from slugify import slugify
 import uuid
+from dotenv import load_dotenv
 
 class Scraper:
     def __init__(self, storage: StorageInterface, notifier: NotifierInterface, cache: Cache, settings):
+        load_dotenv()  # Load environment variables from .env file
         self.storage = storage
         self.notifier = notifier
         self.cache = cache
         self.settings = settings
-        self.base_url = "https://dentalstall.com/shop/page/{}/"
+        self.base_url = os.getenv('BASE_URL')
+        if not self.base_url:
+            raise ValueError("BASE_URL not found in .env file")
         self.headers = {'User-Agent': 'Mozilla/5.0'}
         if self.settings.proxy:
             self.proxies = {"http": self.settings.proxy, "https": self.settings.proxy}
@@ -36,7 +40,6 @@ class Scraper:
         url = self.base_url.format(page_number)
         try:
             response = requests.get(url, headers=self.headers, proxies=self.proxies)
-            print("response is", response.status_code, response.text)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, 'html.parser')
             products = soup.find_all('li', class_='product')
