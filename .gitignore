@@ -1,0 +1,5 @@
+images/
+venv/
+__pycache__/
+.env
+data.json
