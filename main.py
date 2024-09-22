@@ -31,9 +31,11 @@ def scrape(settings: ScrapeSettings, auth: str = Depends(authenticate)):
     cache = Cache()
     scraper = Scraper(storage=storage, notifier=notifier, cache=cache, settings=settings)
 
-    scraped_count = scraper.run()
+    scraped_result = scraper.run()
 
-    notifier.notify(f"Scraping completed. {scraped_count} products were scraped and updated.")
+    scraped_pages_count = scraped_result.get("scraped_pages_count")
+    scraped_products_count = scraped_result.get("scraped_products_count")
+    notifier.notify(f"Scraping completed. {scraped_pages_count} pages were scraped and {scraped_products_count} products were scraped and updated.")
 
     return {"detail": "Scraping completed"}
 
